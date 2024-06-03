@@ -1,0 +1,53 @@
+[gd_scene load_steps=6 format=3 uid="uid://covrk6svmr1se"]
+
+[ext_resource type="Script" path="res://Scripts/player_scr.gd" id="1_2xwux"]
+[ext_resource type="PackedScene" uid="uid://pmbehd4fi2ow" path="res://Scenes/TEST.tscn" id="2_v331d"]
+[ext_resource type="PackedScene" uid="uid://1od3bvw74gp0" path="res://Objects/bloodMoon.tscn" id="3_jks7l"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_u7ogo"]
+radius = 30.0
+height = 200.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_h1asj"]
+size = Vector2(506, 200)
+
+[node name="Player" type="CharacterBody2D"]
+scale = Vector2(0.5, 0.5)
+script = ExtResource("1_2xwux")
+
+[node name="moon" parent="." instance=ExtResource("3_jks7l")]
+position = Vector2(784, -910)
+
+[node name="PlayerBody" parent="." instance=ExtResource("2_v331d")]
+position = Vector2(-3.8147e-06, -7.62939e-06)
+scale = Vector2(0.2, 0.2)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_u7ogo")
+one_way_collision_margin = 0.0
+debug_color = Color(7.60466e-06, 0.586883, 0.770228, 0.42)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+offset = Vector2(0, -200)
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.125
+one_shot = true
+
+[node name="AttackRange" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackRange"]
+position = Vector2(3, 0)
+shape = SubResource("RectangleShape2D_h1asj")
+debug_color = Color(0.989781, 0, 0.286363, 0.42)
+
+[node name="CooldownTimer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+
+[node name="AttackCooldown" type="Timer" parent="."]
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[connection signal="body_entered" from="AttackRange" to="." method="_on_area_2d_body_entered"]
+[connection signal="timeout" from="CooldownTimer" to="." method="_on_cooldown_timer_timeout"]
+[connection signal="timeout" from="AttackCooldown" to="." method="_on_attack_cooldown_timeout"]
